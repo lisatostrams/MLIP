@@ -13,4 +13,19 @@ data = pd.read_csv('petfinder-adoption-prediction/train/train.csv')
 
 #%%
 
-plt.hist(data['Name'])
+import collections
+
+name_counter = collections.Counter(data['Name'].values)
+lst = name_counter.most_common(20)
+df = pd.DataFrame(lst, columns = ['Name', 'Count'])
+df.plot.bar(x='Name',y='Count')
+
+#%%
+
+adoptlst = []
+
+for l in lst:
+    idx = data.loc[:,  'Name'] == l[0]
+    adoptlst.append(data[idx]['AdoptionSpeed'].values)
+    
+    

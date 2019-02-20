@@ -1,0 +1,35 @@
+- Zorg dat je op de develop branch werkt
+git checkout develop
+
+- Zorg dat de develop branch up-to-date is.
+git pull
+
+- Maak een nieuwe branch (de -b geeft aan dat het om een nieuwe branch gaat)
+git checkout -b nameOfNewBranch
+
+- Nu heb je een branch met alle meest recente bestanden van de develop branch. Hierin kan je gewoon bestanden aanmaken en programmeren. Nu kan je dus de Article klasse aanmaken (in de package Data)
+
+Als je wijzigen in git wilt opslaan doe je dat met de volgende 2 stappen.
+- Voeg alle bestanden toe
+git add . 
+
+- Commit alle aanpassingen
+git commit -m “commit message”
+
+Als je commits naar de server wilt pushen, gebruik je:
+git push
+Hier geeft ie waarschijnlijk de eerste keer een melding dat er geen remote bekend is. De regel die je dan als alternatief krijgt werkt wel (dit is eenmalig per nieuwe branch)
+
+Als de hele feature klaar is, kan je mergen. 
+- Ga eerst terug naar de develop branch en maak ‘m up-to-date
+git checkout develop
+git pull
+
+- Merge de nieuwe feature naar de develop branch (de flag --no-ff zorgt ervoor dat later evt de hele feature in 1x teruggedraaid kan worden.
+git merge --no-ff nameOfNewBranch
+
+- Ook deze aanpassingen moeten weer naar de server gepusht worden.
+git push
+
+- Eventueel (maar niet noodzakelijk) kan je de feature branch weer verwijderen, zodat de server schoon blijft.
+git push origin :nameOfNewBranch

@@ -9,15 +9,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('preprocessedTrain.csv')
-X = data.loc[:, data.columns != 'AdoptionSpeed']
-X = X.drop('Description',axis=1)
-X = X.drop('PetID',axis=1)
+data = pd.read_csv('preprocessedTrain.csv') #import data
+X = data.loc[:, data.columns != 'AdoptionSpeed'] #create X without labels
+X = X.drop('Description',axis=1) #drop non numerical values
+X = X.drop('PetID',axis=1) #
 X = X.drop('RescuerID',axis=1)
 
-y = data['AdoptionSpeed']
+y = data['AdoptionSpeed'] #label vector
 
-attributeNames = list(X.columns.values)
+attributeNames = list(X.columns.values) #for printing purposes
 classNames = ['sameDay','firstWeek','firstMonth','2nd3rdMonth','notAdopted']
 
 #%%
@@ -27,13 +27,13 @@ from Toolbox import treeprint
 from sklearn import model_selection
 import matplotlib.pyplot as plt
 
-test_proportion = 0.5
+test_proportion = 0.5  # set crossval proportion
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=test_proportion)
 levels = range(2,51)
 error = np.zeros((2,len(levels)))
 
 for t in levels:
-    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=t)
+    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=t) #train decision tree
     dtc = dtc.fit(X_train,y_train)
     
     y_est_test = dtc.predict(X_test)

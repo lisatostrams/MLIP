@@ -1,0 +1,4 @@
+- Exploratory study  : Lisa 
+- Preprocessing  :  Sjors & Pepijn
+- Convolutional network  :  Casper & Arjan
+- MLP/DT  :  Bart  &  Lisa

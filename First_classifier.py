@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('preprocessedTrain.csv') #import data
+data = pd.read_csv('Data/preprocessedTrain.csv') #import data
 X = data.loc[:, data.columns != 'AdoptionSpeed'] #create X without labels
 X = X.drop('Description',axis=1) #drop non numerical values
 X = X.drop('PetID',axis=1) #
@@ -52,3 +52,5 @@ plt.title('Cross validation over tree depth')
 plt.show()  
 errorSum = sum(error)
 print('Lowest error is {:.2f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
+
+#%%

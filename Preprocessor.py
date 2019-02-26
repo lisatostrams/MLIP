@@ -31,7 +31,7 @@ def preprocess(data):
 		for i in range(len(adjectives)):				# set the position of the adjective to 1 if the describtion contains the adjective.
 			if adjectives[i] in row[20]:
 				row[24+i] = 1
-				adjCount[i] += 
+				adjCount[i] += 1
 	print(adjectives)
 	print(adjCount)
 	print("no name count: "+ str(NoNameCount))
@@ -44,8 +44,8 @@ def write(data, filename):
 		for row in data:
 			writer.writerow(row)
 	
-filename = r"C:\Users\sjors\MLIP\train.csv"
-savefile = r"C:\Users\sjors\MLIP\preprocessedTrain.txt"
+filename = r"petfinder-adoption-prediction/train/train.csv"
+savefile = r"preprocessedTrain.csv"
 data = ReadFile(filename)
 newdata = preprocess(data)
 write(newdata,savefile)

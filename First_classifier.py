@@ -54,3 +54,62 @@ errorSum = sum(error)
 print('Lowest error is {:.2f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
 
 #%%
+
+# Import the model we are using
+from sklearn.ensemble import RandomForestRegressor
+# Instantiate model with 10 decision trees
+
+estimators = np.logspace(1,3,num=3,base=10)
+error = np.zeros((2,len(estimators)))
+
+for n_e in estimators:
+    rf = RandomForestRegressor(n_estimators = int(n_e))
+    # Train the model on training data
+    rf = rf.fit(X_train, y_train)
+    
+    y_est_test = rf.predict(X_test)
+    y_est_train = rf.predict(X_train)
+    
+    test_class_error = 1-np.mean(y_est_test == y_test)
+    train_class_error = 1-np.mean(y_est_train == y_train)
+    error[0,int(np.log10(n_e)-1)], error[1,int(np.log10(n_e)-1)]= train_class_error, test_class_error
+
+#%%
+plt.semilogx(estimators, error[0,:])
+plt.semilogx(estimators, error[1,:])
+plt.xlabel('Model complexity (max tree depth)')
+plt.ylabel('Error (misclassification rate)')
+plt.legend(['Error_train','Error_test']) 
+plt.title('Cross validation over tree depth')
+plt.show()  
+errorSum = sum(error)
+print('Lowest error is {:.2f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
+
+
+#%%
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train)
+
+
+#%%
+
+from sklearn.linear_model import LogisticRegression
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+
+
+#%%
+
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+gnb.fit(X_train, y_train)
+
+
+#%%
+
+
+from sklearn.svm import SVC
+svm = SVC()
+svm.fit(X_train, y_train)

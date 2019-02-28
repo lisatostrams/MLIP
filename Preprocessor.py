@@ -11,7 +11,7 @@ def ReadFile(file):
 	
 #No name = 0, name = 1
 def preprocess(data):
-	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin','mix','black','white','vet','indoor','family','stray','injur','puppy','kitten']
+	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin','mix','black','white','vet','indoor','family','stray','injur','puppy','kitten','spayed','red']
 	adjCount = [0] * len(adjectives)
 	NoNameCount = 0
 	NameCount = 0

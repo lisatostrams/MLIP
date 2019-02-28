@@ -31,19 +31,19 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_siz
 
 from sklearn.svm import SVC
 
-degree = np.arange(1,13,step=2,dtype=int)
+degree = np.arange(1,3,step=2,dtype=int)
 error = np.zeros((2,len(degree)))
 
 for d in degree:
-    svm = SVC(degree=d)
+    svm = SVC(kernel='poly',degree=d)
     # Train the model on training data
     svm = svm.fit(X_train, y_train)
     
     y_est_test = svm.predict(X_test)
     y_est_train = svm.predict(X_train)
     
-    test_class_error = 1-np.mean(np.round(y_est_test,0) == y_test)
-    train_class_error = 1-np.mean(np.round(y_est_train,0) == y_train)
+    test_class_error = 1-np.mean(y_est_test == y_test)
+    train_class_error = 1-np.mean(y_est_train == y_train)
     error[0,int(d/2)], error[1,int(d/2)]= train_class_error, test_class_error
 
 plt.plot(degree, error[0,:])

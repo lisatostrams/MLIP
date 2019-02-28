@@ -19,7 +19,7 @@ def preprocess(data):
 		for count in adjCount:
 			data[i].append(count)
 	for j in range(len(adjectives)):					# set the adjectives names in the first row
-			data[0][24+j] = adjectives[j]
+			data[0][23+j] = adjectives[j]
 	for row in data:
 		if (row[1].lower() == 'no name yet' or row[1].lower() == 'no name' or row[1].lower() == '' or row[1].lower() == 'not yet named' ):
 			row[1] = 0
@@ -30,7 +30,7 @@ def preprocess(data):
 		data[0][1] = 'Name'
 		for i in range(len(adjectives)):				# set the position of the adjective to 1 if the describtion contains the adjective.
 			if adjectives[i] in row[20]:
-				row[24+i] = 1
+				row[23+i] = 1
 				adjCount[i] += 1
 	print(adjectives)
 	print(adjCount)
@@ -44,8 +44,8 @@ def write(data, filename):
 		for row in data:
 			writer.writerow(row)
 	
-filename = r"petfinder-adoption-prediction/train/train.csv"
-savefile = r"preprocessedTrain.csv"
+filename = r"../Data/test.csv"
+savefile = r"../Data/preprocessedtest.csv"
 data = ReadFile(filename)
 newdata = preprocess(data)
 write(newdata,savefile)

@@ -11,7 +11,7 @@ def ReadFile(file):
 	
 #No name = 0, name = 1
 def preprocess(data):
-	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin']
+	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin','mix','black','white','vet','indoor','family','stray','injur','puppy','kitten','spayed','red']
 	adjCount = [0] * len(adjectives)
 	NoNameCount = 0
 	NameCount = 0
@@ -29,7 +29,7 @@ def preprocess(data):
 			NameCount += 1
 		data[0][1] = 'Name'
 		for i in range(len(adjectives)):				# set the position of the adjective to 1 if the describtion contains the adjective.
-			if adjectives[i] in row[20]:
+			if adjectives[i] in row[20].lower():
 				row[23+i] = 1
 				adjCount[i] += 1
 	print(adjectives)
@@ -44,8 +44,9 @@ def write(data, filename):
 		for row in data:
 			writer.writerow(row)
 	
-filename = r"../Data/test.csv"
-savefile = r"../Data/preprocessedtest.csv"
+file = 'test'
+filename = r"../Data/{}.csv".format(file)
+savefile = r"../Data/preprocessed{}.csv".format(file)
 data = ReadFile(filename)
 newdata = preprocess(data)
 write(newdata,savefile)

@@ -18,8 +18,20 @@ X = X.drop('RescuerID',axis=1)
 
 y = data['AdoptionSpeed'] #label vector
 
-dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=5) #train decision tree
+dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=10) #train decision tree
 dtc = dtc.fit(X,y)
+
+
+#%%
+attributeNames = list(X)
+attribute_importance = [(attributeNames[i],dtc.feature_importances_[i]) for i in range(len(attributeNames))]
+attributes_sorted = sorted(attribute_importance, key=lambda item: item[1], reverse=True)
+
+print('Features in order of importance:')
+print(*['{}: {:.4f}'.format(i[0],i[1]) for i in attributes_sorted],sep='\n')
+attributes = [i[0] for i in attributes_sorted][:30]
+
+Xnew = X[attributes]
 
 #%%
 

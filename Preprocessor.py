@@ -1,7 +1,7 @@
 import re
 import csv
 from textblob import TextBlob
-
+import json
 
 def ReadFile(file):
 	with open(file, encoding="utf8") as csv_file:
@@ -10,6 +10,11 @@ def ReadFile(file):
 		for row in csv_reader:
 			var.append(row)
 	return var
+
+def OpenFile(file):
+	with open(file) as json_file:
+		data = json.load(json_file)
+	return data
 	
 #No name = 0, name = 1
 def preprocess(data):
@@ -18,7 +23,7 @@ def preprocess(data):
 	NoNameCount = 0
 	NameCount = 0
 	for i in range(len(data)):							# add empty columns to the matrix
-		for k in range (len(adjCount)+1):
+		for k in range (len(adjCount)+2):
 			data[i].append(k)
 	for j in range(len(adjectives)):					# set the adjectives names in the first row
 			data[0][24+j] = adjectives[j]
@@ -37,12 +42,26 @@ def preprocess(data):
 		
 		blob = TextBlob(row[20])
 		sentiment = blob.sentiment.polarity
-		row[len(row)-1] = sentiment				# Sentiment score
+		row[len(row)-2] = sentiment				# Sentiment score
+	#popularity test resquer id
+	uniqueID = []
+	for row in data:
+		if row[18] not in uniqueID:
+			uniqueID.append(row[18])
+	for id in uniqueID:
+		idcount = 0
+		for row in data:
+			if row[18] == id:
+				idcount += 1
+		for row in data:
+			if row[18] == id:
+				row[len(row)-1] = idcount
 	data[0][52] = 'sentiment'
 	print(adjectives)
 	print(adjCount)
 	print("no name count: "+ str(NoNameCount))
 	print("name count: " + str(NameCount))
+	print("number of resquers : " + str(len(uniqueID)))
 	return data
 	
 def write(data, filename):

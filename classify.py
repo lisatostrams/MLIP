@@ -29,7 +29,7 @@ attributes_sorted = sorted(attribute_importance, key=lambda item: item[1], rever
 
 print('Features in order of importance:')
 print(*['{}: {:.4f}'.format(i[0],i[1]) for i in attributes_sorted],sep='\n')
-attributes = [i[0] for i in attributes_sorted][:30]
+attributes = [i[0] for i in attributes_sorted][:15]
 
 Xnew = X[attributes]
 

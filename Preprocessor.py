@@ -1,5 +1,7 @@
 import re
 import csv
+from textblob import TextBlob
+
 
 def ReadFile(file):
 	with open(file, encoding="utf8") as csv_file:
@@ -11,13 +13,13 @@ def ReadFile(file):
 	
 #No name = 0, name = 1
 def preprocess(data):
-	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin','mix','black','white','vet','indoor','family','stray','injur','puppy','kitten','spayed','red']
+	adjectives = ['energ','play','health','cute','love','sweet','beaut','friend','fun','ador','activ','good','great','best','abandon','adopt','vaccin','mix','black','white','vet','indoor','family','stray','injur','puppy','kitten','spayed']
 	adjCount = [0] * len(adjectives)
 	NoNameCount = 0
 	NameCount = 0
 	for i in range(len(data)):							# add empty columns to the matrix
-		for count in adjCount:
-			data[i].append(count)
+		for k in range (len(adjCount)+1):
+			data[i].append(k)
 	for j in range(len(adjectives)):					# set the adjectives names in the first row
 			data[0][24+j] = adjectives[j]
 	for row in data:
@@ -32,6 +34,11 @@ def preprocess(data):
 			if adjectives[i] in row[20].lower():
 				row[24+i] = 1
 				adjCount[i] += 1
+		
+		blob = TextBlob(row[20])
+		sentiment = blob.sentiment.polarity
+		row[len(row)-1] = sentiment				# Sentiment score
+	data[0][52] = 'sentiment'
 	print(adjectives)
 	print(adjCount)
 	print("no name count: "+ str(NoNameCount))
@@ -44,8 +51,8 @@ def write(data, filename):
 		for row in data:
 			writer.writerow(row)
 	
-filename = r"C:\Users\sjors\MLIP\train.csv"
-savefile = r"C:\Users\sjors\MLIP\preprocessedTrain.txt"
+filename = r"train.csv"
+savefile = r"preprocessedTrain.txt"
 data = ReadFile(filename)
 newdata = preprocess(data)
 write(newdata,savefile)

@@ -43,7 +43,7 @@ def preprocess(data):
 		blob = TextBlob(row[20])
 		sentiment = blob.sentiment.polarity
 		row[len(row)-3] = sentiment				# Sentiment score
-	uniqueID = []								# from here popularity test resquer id
+	uniqueID = []								# from here popularity test rescuer id
 	for row in data:
 		if row[18] not in uniqueID:
 			uniqueID.append(row[18])
@@ -55,9 +55,9 @@ def preprocess(data):
 		for row in data:
 			if row[18] == id:
 				row[len(row)-2] = idcount
-	data[0][52] = 'sentiment'
-	data[0][53] = 'popularity resquer id'
-	data[0][54] = 'description length'
+	data[0][(len(data[0][:]))-3] = 'sentiment'
+	data[0][(len(data[0][:]))-2] = 'popularity resquer id'
+	data[0][(len(data[0][:]))-1] = 'description length'
 	print(adjectives)
 	print(adjCount)
 	print("no name count: "+ str(NoNameCount))

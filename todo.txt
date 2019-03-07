@@ -1,0 +1,4 @@
+- Exploratory study
+- Preprocessing
+- Convolutional network
+- MLP/DT 

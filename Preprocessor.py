@@ -23,7 +23,7 @@ def preprocess(data):
 	NoNameCount = 0
 	NameCount = 0
 	for i in range(len(data)):							# add empty columns to the matrix
-		for k in range (len(adjCount)+2):
+		for k in range (len(adjCount)+3):
 			data[i].append(k)
 	for j in range(len(adjectives)):					# set the adjectives names in the first row
 			data[0][24+j] = adjectives[j]
@@ -39,12 +39,11 @@ def preprocess(data):
 			if adjectives[i] in row[20].lower():
 				row[24+i] = 1
 				adjCount[i] += 1
-		
+		row[len(row)-1] = len(row[20])					# Description length
 		blob = TextBlob(row[20])
 		sentiment = blob.sentiment.polarity
-		row[len(row)-2] = sentiment				# Sentiment score
-	#popularity test resquer id
-	uniqueID = []
+		row[len(row)-3] = sentiment				# Sentiment score
+	uniqueID = []								# from here popularity test resquer id
 	for row in data:
 		if row[18] not in uniqueID:
 			uniqueID.append(row[18])
@@ -55,8 +54,10 @@ def preprocess(data):
 				idcount += 1
 		for row in data:
 			if row[18] == id:
-				row[len(row)-1] = idcount
+				row[len(row)-2] = idcount
 	data[0][52] = 'sentiment'
+	data[0][53] = 'popularity resquer id'
+	data[0][54] = 'description length'
 	print(adjectives)
 	print(adjCount)
 	print("no name count: "+ str(NoNameCount))
@@ -71,7 +72,7 @@ def write(data, filename):
 			writer.writerow(row)
 	
 filename = r"train.csv"
-savefile = r"preprocessedTrain.txt"
+savefile = r"preprocessedTrain.csv"
 data = ReadFile(filename)
 newdata = preprocess(data)
 write(newdata,savefile)

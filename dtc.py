@@ -12,16 +12,17 @@ from sklearn import model_selection
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter
-data = pd.read_csv('Data/preprocessedTrain.csv') #import data
+data = pd.read_csv('Data/preprocessedTrain2.csv') #import data
 X = data.loc[:, data.columns != 'AdoptionSpeed'] #create X without labels
+X = X.fillna(0)
 X = X.drop('Description',axis=1) #drop non numerical values
 X = X.drop('PetID',axis=1) #
 X = X.drop('RescuerID',axis=1)
-#X = X.drop('Type',axis=1)
-
+X = X.drop('Unnamed: 0',axis=1)
+X = X.drop('img_metadata_label',axis=1)
 y = data['AdoptionSpeed'] #label vector
 
-test_proportion = 0.1  # set crossval proportion
+test_proportion = 0.5  # set crossval proportion
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=test_proportion)
 
 

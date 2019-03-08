@@ -21,10 +21,42 @@ X = X.drop('RescuerID',axis=1)
 
 y = data['AdoptionSpeed'] #label vector
 
-test_proportion = 0.5  # set crossval proportion
+test_proportion = 0.1  # set crossval proportion
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=test_proportion)
-dtc = tree.DecisionTreeClassifier(criterion='gini') #train decision tree
+
+
+#%%
+
+levels = range(2,51)
+error = np.zeros((2,len(levels)))
+
+for t in levels:
+    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=t) #train decision tree
+    dtc = dtc.fit(X_train,y_train)
+    
+    y_est_test = dtc.predict(X_test)
+    y_est_train = dtc.predict(X_train)
+    
+    test_class_error = 1-np.mean(y_est_test == y_test)
+    train_class_error = 1-np.mean(y_est_train == y_train)
+    error[0,t-2], error[1,t-2]= train_class_error, test_class_error
+
+plt.plot(levels, error[0,:])
+plt.plot(levels, error[1,:])
+plt.xlabel('Model complexity (max tree depth)')
+plt.ylabel('Error (misclassification rate)')
+plt.legend(['Error_train','Error_test']) 
+plt.title('Cross validation over tree depth')
+plt.show()  
+
+
+print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), levels[np.argmin(error[1,:])]))
+
+minl = levels[np.argmin(error[1,:])]
+dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=minl) #train decision tree
 dtc = dtc.fit(X_train,y_train)
+
+
 
 
 #%%
@@ -41,8 +73,8 @@ print('Features in order of importance:')
 print(*['{}: {:.4f}'.format(i[0],i[1]) for i in attributes_sorted],sep='\n')
 
 for t in levels:
-    attributes = [i[0] for i in attributes_sorted][:t+1]
-    dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=5)
+    attributes = [i[0] for i in attributes_sorted][:t]
+    dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=minl)
     Xnew = X_train[attributes]
     Xnew_test = X_test[attributes]
     dtc = dtc.fit(Xnew,y_train)
@@ -61,9 +93,9 @@ plt.legend(['Error_train','Error_test'])
 plt.title('Cross validation over number of attributes')
 plt.show()  
 errorSum = sum(error)
-print('Lowest error is {:.2f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
-print('Lowest test error is {:.2f} at {}'.format(min(error[1,:]), np.argmin(error[1,:])))
-print('Lowest train error is {:.2f} at {}'.format(min(error[0,:]), np.argmin(error[0,:])))
+print('Lowest error is {:.4f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
+print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), levels[np.argmin(error[1,:])]))
+print('Lowest train error is {:.4f} at {}'.format(min(error[0,:]), np.argmin(error[0,:])))
 
 #%%
 
@@ -73,8 +105,8 @@ y_pred_test = np.zeros((len(y_test),len(nAttributes)))
 error = np.zeros((2,len(nAttributes)))
 adj = min(nAttributes)
 for t in nAttributes:
-    attributes = [i[0] for i in attributes_sorted][:t+1]
-    dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=5)
+    attributes = [i[0] for i in attributes_sorted][:t]
+    dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=minl)
     Xnew = X_train[attributes]
     Xnew_test = X_test[attributes]
     dtc = dtc.fit(Xnew,y_train)
@@ -93,10 +125,10 @@ plt.legend(['Error_train','Error_test'])
 plt.title('Cross validation over tree depth')
 plt.show()  
 errorSum = sum(error)
-print('Lowest error is {:.2f} at {}'.format(min(errorSum)/2, nAttributes[np.argmin(errorSum)]))
-print('Lowest test error is {:.2f} at {}'.format(min(error[1,:]), nAttributes[np.argmin(error[1,:])]))
-print('Lowest train error is {:.2f} at {}'.format(min(error[0,:]), nAttributes[np.argmin(error[0,:])]))
+print('Lowest error is {:.4f} at {}'.format(min(errorSum)/2, nAttributes[np.argmin(errorSum)]))
+print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), nAttributes[np.argmin(error[1,:])]))
+print('Lowest train error is {:.4f} at {}'.format(min(error[0,:]), nAttributes[np.argmin(error[0,:])]))
 
-y_pred = y_test
+y_pred = pd.Series(y_test.values,index=y_test.index)
 for i in range(0,len(y_pred)):
     y_pred.iloc[i] = max(Counter(y_pred_test[i,:]))

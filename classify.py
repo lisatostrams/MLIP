@@ -18,7 +18,7 @@ X = X.drop('RescuerID',axis=1)
 
 y = data['AdoptionSpeed'] #label vector
 
-dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=10) #train decision tree
+dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=5) #train decision tree
 dtc = dtc.fit(X,y)
 
 
@@ -29,10 +29,10 @@ attributes_sorted = sorted(attribute_importance, key=lambda item: item[1], rever
 
 print('Features in order of importance:')
 print(*['{}: {:.4f}'.format(i[0],i[1]) for i in attributes_sorted],sep='\n')
-attributes = [i[0] for i in attributes_sorted][:15]
+attributes = [i[0] for i in attributes_sorted][:10]
 
 Xnew = X[attributes]
-
+dtc = dtc.fit(Xnew,y)
 #%%
 
 test = pd.read_csv('Data/preprocessedtest.csv')
@@ -40,7 +40,7 @@ X_test = test.drop('Description',axis=1) #drop non numerical values
 id = X_test['PetID']
 X_test = X_test.drop('PetID',axis=1) #
 X_test = X_test.drop('RescuerID',axis=1)
-
+X_test = X_test[attributes]
 y_est = dtc.predict(X_test)
 
 #%%

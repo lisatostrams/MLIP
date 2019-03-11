@@ -5,28 +5,30 @@ Created on Thu Feb 28 12:49:15 2019
 @author: Lisa
 """
 #%% Attributes obtained from crossvalidation
-nAttributes = ['popularity resquer id',
- 'Age',
+nAttributes = ['Age',
+ 'popularity resquer id',
  'Breed1',
+ 'img_pixels',
  'PhotoAmt',
- 'img_ave_contrast',
- 'description length',
- 'sentiment',
  'Sterilized',
+ 'description length',
+ 'img_ave_contrast',
  'Breed2',
  'Quantity',
+ 'Gender',
+ 'img_metadata_sentiment2',
+ 'beaut',
+ 'MaturitySize',
  'State',
- 'Fee',
+ 'Color3',
  'vaccin',
+ 'abandon',
  'Vaccinated',
- 'Color1',
- 'good',
- 'Dewormed',
- 'family',
- 'mix',
- 'vet',
- 'ador']
-max_depth = 7
+ 'Fee',
+ 'indoor',
+ 'cute',
+ 'great']
+max_depth = 8
 
 n_estimators = 10
 
@@ -59,18 +61,19 @@ from sklearn import preprocessing
 
 
 
-data = pd.read_csv('Data/preprocessedTrain2.csv') #import data
+data = pd.read_csv('Data/preprocessedTrain3.csv') #import data
 X = data.loc[:, data.columns != 'AdoptionSpeed'] #create X without labels
 X = X.fillna(0)
 X = X.drop('Description',axis=1) #drop non numerical values
 X = X.drop('PetID',axis=1) #
 X = X.drop('RescuerID',axis=1)
 X = X.drop('Unnamed: 0',axis=1)
+X = X.drop('Unnamed: 0.1',axis=1)
 X = X.drop('img_metadata_label',axis=1)
 X = X[nAttributes]
 y = data['AdoptionSpeed'] #label vector
 
-test = pd.read_csv('Data/preprocessedtest2.csv')
+test = pd.read_csv('Data/preprocessedtest3.csv')
 
 
 X_test = test.drop('Description',axis=1) #drop non numerical values
@@ -79,6 +82,8 @@ id = X_test['PetID']
 X_test = X_test.drop('PetID',axis=1) #
 X_test = X_test.drop('RescuerID',axis=1)
 X_test = X_test.drop('Unnamed: 0',axis=1)
+X_test = X_test.drop('Unnamed: 0.1',axis=1)
+
 X_test = X_test.drop('img_metadata_label',axis=1)
 X_test = X_test[nAttributes]
 
@@ -236,7 +241,7 @@ for i in range(1,10):
         model_j.append(clf)
         score_j.append(clf.score(mlp_test,meta_y_test))
         hist_est = hist(clf.predict(predictions))
-        weights = 1-histy**2
+        weights = 1-histy
         sse_j.append(sse_hist(hist_est,histy,weight=weights))
         
     

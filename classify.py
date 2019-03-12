@@ -263,7 +263,7 @@ s = [accuracy[i]-sse[i] for i in range(0,7)]
 model = np.argmax(s)
 print('Best number of hlayers total = {}'.format(model+1)) 
 #%%
-clf = models[model]
+clf = models[model_acc]
 print(clf.score(mlp_train,meta_y_train)) 
 print(clf.score(mlp_test,meta_y_test))
 
@@ -280,4 +280,43 @@ submission.to_csv('submission.csv',index=False)
 histy = y.hist()
 submission.hist()
 plt.show()
+
+#%%
+
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
+ 
+fig, ax = plt.subplots()
+objects = 'DTC RF LOGREG KNN SVM GNB XGB'.split(sep=' ')
+
+performance = [np.mean(mlp_train[:,i] == meta_y_train) for i in range(len(objects))]
+performance2 = [np.mean(mlp_test[:,i] == meta_y_test) for i in range(len(objects))]
+performance.append(clf.score(mlp_train,meta_y_train))
+performance2.append(clf.score(mlp_test,meta_y_test))
+objects.append('Meta classifier MLP')
+index = np.arange(len(objects))
+
+importance = [(objects[i],performance[i],performance2[i]) for i in range(len(objects))]
+isorted = sorted(importance, key=lambda item: item[2], reverse=True)
+
+objects = [i[0] for i in isorted]
+performance = [i[1] for i in isorted]
+performance2 = [i[2] for i in isorted]
+
+bar_width = 0.35
+
+rects1 = ax.barh(index, performance, bar_width,align='center', alpha=0.5,label='Meta train data')
+rects2 = ax.barh(index+bar_width, performance2,bar_width, align='center', alpha=0.5,label='Meta test data')
+plt.yticks(index+bar_width-0.175, objects)
+
+for i, v in enumerate(performance2):
+    ax.text(v + 0.01, i + .25, '{:.4f}'.format(v), color='darkorange',fontweight='bold')
+ax.legend()
+plt.title('Accuracy of the classifiers')
+plt.tight_layout()
+plt.savefig('classifiers.png',dpi=300)
+plt.show()
+
+#%%
 

@@ -27,35 +27,35 @@ test_proportion = 0.1  # set crossval proportion
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=test_proportion)
 
 
-#%%
-
-levels = range(2,51)
-error = np.zeros((2,len(levels)))
-
-for t in levels:
-    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=t) #train decision tree
-    dtc = dtc.fit(X_train,y_train)
-    
-    y_est_test = dtc.predict(X_test)
-    y_est_train = dtc.predict(X_train)
-    
-    test_class_error = 1-np.mean(y_est_test == y_test)
-    train_class_error = 1-np.mean(y_est_train == y_train)
-    error[0,t-2], error[1,t-2]= train_class_error, test_class_error
-
-plt.plot(levels, error[0,:])
-plt.plot(levels, error[1,:])
-plt.xlabel('Model complexity (max tree depth)')
-plt.ylabel('Error (misclassification rate)')
-plt.legend(['Error_train','Error_test']) 
-plt.title('Cross validation over tree depth')
-plt.show()  
-
-
-print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), levels[np.argmin(error[1,:])]))
-
-minl = levels[np.argmin(error[1,:])]
-dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=minl) #train decision tree
+##%%
+#
+#levels = range(2,51)
+#error = np.zeros((2,len(levels)))
+#
+#for t in levels:
+#    dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=t) #train decision tree
+#    dtc = dtc.fit(X_train,y_train)
+#    
+#    y_est_test = dtc.predict(X_test)
+#    y_est_train = dtc.predict(X_train)
+#    
+#    test_class_error = 1-np.mean(y_est_test == y_test)
+#    train_class_error = 1-np.mean(y_est_train == y_train)
+#    error[0,t-2], error[1,t-2]= train_class_error, test_class_error
+#
+#plt.plot(levels, error[0,:])
+#plt.plot(levels, error[1,:])
+#plt.xlabel('Model complexity (max tree depth)')
+#plt.ylabel('Error (misclassification rate)')
+#plt.legend(['Error_train','Error_test']) 
+#plt.title('Cross validation over tree depth')
+#plt.show()  
+#
+#
+#print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), levels[np.argmin(error[1,:])]))
+#
+#minl = levels[np.argmin(error[1,:])]
+dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=8) #train decision tree
 dtc = dtc.fit(X_train,y_train)
 
 #%%
@@ -97,3 +97,24 @@ errorSum = sum(error)
 print('Lowest error is {:.4f} at {}'.format(min(errorSum)/2, np.argmin(errorSum)))
 print('Lowest test error is {:.4f} at {}'.format(min(error[1,:]), levels[np.argmin(error[1,:])]))
 print('Lowest train error is {:.4f} at {}'.format(min(error[0,:]), np.argmin(error[0,:])))
+
+
+#%%
+
+
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
+ 
+objects = [i[0] for i in attributes_sorted][:23]
+y_pos = np.arange(len(objects))
+performance = [i[1] for i in attributes_sorted][:23]
+ 
+plt.barh(y_pos, performance, align='center', alpha=0.5)
+plt.yticks(y_pos, objects)
+
+plt.title('Decrease in Gini index if split on attribute')
+plt.tight_layout()
+plt.savefig('barplot.png',dpi=300)
+plt.show()
+

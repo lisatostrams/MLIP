@@ -56,7 +56,7 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_siz
 #
 #minl = levels[np.argmin(error[1,:])]
 dtc = tree.DecisionTreeClassifier(criterion='gini',max_depth=8) #train decision tree
-dtc = dtc.fit(X_train,y_train)
+dtc = dtc.fit(X,y)
 
 #%%
 
@@ -105,7 +105,7 @@ print('Lowest train error is {:.4f} at {}'.format(min(error[0,:]), np.argmin(err
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
- 
+
 objects = [i[0] for i in attributes_sorted][:23]
 y_pos = np.arange(len(objects))
 performance = [i[1] for i in attributes_sorted][:23]

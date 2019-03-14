@@ -60,6 +60,12 @@ from sklearn.preprocessing import PowerTransformer
 from sklearn import preprocessing
 
 
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
+
 
 data = pd.read_csv('Data/preprocessedTrain3.csv') #import data
 X = data.loc[:, data.columns != 'AdoptionSpeed'] #create X without labels
@@ -99,7 +105,7 @@ scaler = preprocessing.StandardScaler().fit(X[zero])
 X[zero] = scaler.transform(X[zero])
 X_test[zero] = scaler.transform(X_test[zero])
 
-meta_train, meta_test, meta_y_train, meta_y_test = model_selection.train_test_split(X,y,test_size=0.1,stratify=y)
+meta_train, meta_test, meta_y_train, meta_y_test = model_selection.train_test_split(X,y,test_size=0.05)
 Xlr_train = meta_train
 Xlr_m_test = meta_test
 Xlr_test = X_test
@@ -131,7 +137,7 @@ for d in dummy:
 #%%
 
 
-classifiers = 'DTC RF LOGREG KNN SVM GNB XGB'.split(sep=' ')
+classifiers = 'DTC RF LOGREG KNN SVM SVMlinear GNB XGB ADABoost QDA'.split(sep=' ')
 predictions = np.zeros((len(X_test),len(classifiers)))
 mlp_train = np.zeros((len(meta_train),len(classifiers)))
 mlp_test = np.zeros((len(meta_test),len(classifiers)))
@@ -166,21 +172,37 @@ predictions[:,4] = svm.predict(X_test)
 mlp_train[:,4] = svm.predict(meta_train)
 mlp_test[:,4] = svm.predict(meta_test)
 
+svml = SVC(kernel="linear", C=0.025)
+svml = svml.fit(meta_train,meta_y_train)
+predictions[:,5] = svml.predict(X_test)
+mlp_train[:,5] = svml.predict(meta_train)
+mlp_test[:,5] = svml.predict(meta_test)
+
 gnb = GaussianNB()
 gnb = gnb.fit(meta_train, meta_y_train)
-predictions[:,5] = gnb.predict(X_test)
-mlp_train[:,5] = dtc.predict(meta_train)
-mlp_test[:,5] = knn.predict(meta_test)
-
-
+predictions[:,6] = gnb.predict(X_test)
+mlp_train[:,6] = gnb.predict(meta_train)
+mlp_test[:,6] = gnb.predict(meta_test)
 
 d_train = xgb.DMatrix(data=meta_train, label=meta_y_train, feature_names=meta_train.columns)
 d_val = xgb.DMatrix(data=meta_test,label=meta_y_test, feature_names=meta_test.columns)
 evallist = [(d_val, 'eval'), (d_train, 'train')]
-model = xgb.train(dtrain=d_train, num_boost_round=30000, evals=evallist, early_stopping_rounds=3000, verbose_eval=3000, params=xgb_params)
-predictions[:,6] = np.round(model.predict(xgb.DMatrix(X_test, feature_names=X_test.columns), ntree_limit=model.best_ntree_limit),0)
-mlp_train[:,6] = np.round(model.predict(xgb.DMatrix(meta_train, feature_names=meta_train.columns), ntree_limit=model.best_ntree_limit),0)
-mlp_test[:,6] = np.round(model.predict(xgb.DMatrix(meta_test, feature_names=meta_test.columns), ntree_limit=model.best_ntree_limit),0)
+model = xgb.train(dtrain=d_train, num_boost_round=30000, evals=evallist, early_stopping_rounds=3000, verbose_eval=30000, params=xgb_params)
+predictions[:,7] = np.round(model.predict(xgb.DMatrix(X_test, feature_names=X_test.columns), ntree_limit=model.best_ntree_limit),0)
+mlp_train[:,7] = np.round(model.predict(xgb.DMatrix(meta_train, feature_names=meta_train.columns), ntree_limit=model.best_ntree_limit),0)
+mlp_test[:,7] = np.round(model.predict(xgb.DMatrix(meta_test, feature_names=meta_test.columns), ntree_limit=model.best_ntree_limit),0)
+
+abc = AdaBoostClassifier()
+abc = abc.fit(meta_train,meta_y_train)
+predictions[:,8] = abc.predict(X_test)
+mlp_train[:,8] = abc.predict(meta_train)
+mlp_test[:,8] = abc.predict(meta_test)
+
+qda = QuadraticDiscriminantAnalysis()
+qda = qda.fit(meta_train,meta_y_train)
+predictions[:,9] = qda.predict(X_test)
+mlp_train[:,9] = qda.predict(meta_train)
+mlp_test[:,9] = qda.predict(meta_test)
 
 #%%
 
@@ -226,12 +248,14 @@ def sse_hist(h1,h2,weight=[1,1,1,1,1]):
 #%%
 histy = hist(y)     
 
+
+
 from sklearn.neural_network import MLPClassifier
 models = []
 accuracy = []
 models_sse = []
 sse = []
-for i in range(1,10):
+for i in range(1,15):
     model_j = []
     score_j = []
     sse_j = []
@@ -288,7 +312,7 @@ import numpy as np
 import matplotlib.pyplot as plt
  
 fig, ax = plt.subplots()
-objects = 'DTC RF LOGREG KNN SVM GNB XGB'.split(sep=' ')
+objects = 'DTC RF LOGREG KNN SVM SVMlinear GNB XGB ADABoost QDA'.split(sep=' ')
 
 performance = [np.mean(mlp_train[:,i] == meta_y_train) for i in range(len(objects))]
 performance2 = [np.mean(mlp_test[:,i] == meta_y_test) for i in range(len(objects))]
